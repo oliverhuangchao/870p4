@@ -88,3 +88,47 @@ std::vector<Frame*> FrameFactory::getFrames(const std::string& name) {
   multiFrames[name] = frames;
   return frames;
 }
+
+// the frame can change its size throught this function
+
+std::vector<Frame*> FrameFactory::changeFrames(const std::string& name, double zoomInteger) {
+  // First search map to see if we've already made it:
+  std::map<std::string, std::vector<Frame*> >::const_iterator 
+    pos = multiFrames.find(name); 
+  if ( pos != multiFrames.end() ) {
+    return pos->second;
+  }
+
+  // It wasn't in the map, so we have to make the vector of Frames:
+  SDL_Surface* surface = IOManager::
+     getInstance().loadAndSet(gdata.getXmlStr(name+"/file"), true);
+  unsigned numberOfFrames = gdata.getXmlInt(name+"/frames");
+  std::vector<Frame*> frames;
+  std::vector<SDL_Surface*> surfaces;
+  frames.reserve(numberOfFrames);
+  Uint16 srcX = gdata.getXmlInt(name+"/srcX");
+  Uint16 srcY = gdata.getXmlInt(name+"/srcY");
+  Uint16 width = gdata.getXmlInt(name+"/width");
+  Uint16 height = gdata.getXmlInt(name+"/height");
+
+  SDL_Surface* surf;
+  for (unsigned i = 0; i < numberOfFrames; ++i) {
+    unsigned frameX = i * width + srcX;
+   surf = ExtractSurface::getInstance().
+               get(surface, width, height, frameX, srcY); 
+               
+   // change here
+	surf = zoomSurface(surf, zoomInteger, zoomInteger, SMOOTHING_ON);
+    surfaces.push_back( surf );
+    
+    frames.push_back( new Frame(name, surf) );
+  }
+  SDL_FreeSurface(surface);
+  multiSurfaces[name] = surfaces;
+  multiFrames[name] = frames;
+  return frames;
+  
+  //pic = zoomSurface(pter, zoom, zoom, SMOOTHING_ON);
+  
+  //
+}

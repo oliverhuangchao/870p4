@@ -27,8 +27,8 @@ MultiSprite::MultiSprite( const std::string& name) :
   timeSinceLastFrame( 0 ),
   frameWidth(frames[0]->getWidth()),
   frameHeight(frames[0]->getHeight()),
-  frameDirection(true),
-  frameName(name)
+  frameHungry( false ),
+  frameName( name )
 { }
 
 MultiSprite::MultiSprite(const MultiSprite& s) :
@@ -42,16 +42,16 @@ MultiSprite::MultiSprite(const MultiSprite& s) :
   timeSinceLastFrame( s.timeSinceLastFrame ),
   frameWidth( s.frameWidth ),
   frameHeight( s.frameHeight ),
-  frameDirection( s.frameDirection ),
+  frameHungry( s.frameHungry ),
   frameName(s.frameName)
   { }
 
-void MultiSprite::setDirection(bool currentDirection){
-  frameDirection = currentDirection;
+void MultiSprite::setHungry(const bool x){
+  frameHungry = x;
 }
 
-const bool MultiSprite::getDirection(){
-  return frameDirection;
+const bool MultiSprite::getHungry(){
+  return frameHungry;
 }
 
 const std::string MultiSprite::getFrameName(){
@@ -76,17 +76,22 @@ void MultiSprite::update(Uint32 ticks) {
   }
   if ( Y() > worldHeight-frameHeight) {
     velocityY( -abs( velocityY() ) );
+    
   }
 
   if ( X() < 0) {
     velocityX( abs( velocityX() ) );
     frames = FrameFactory::getInstance().getFrames(frameName+"/front");
-    //setDirection(true);
+    frames = FrameFactory::getInstance().changeFrames(frameName+"/front",2.0);
+
+    //setHungry(true);
+    
+    
 
   }
   if ( X() > worldWidth-frameWidth) {
     velocityX( -abs( velocityX() ) );
     frames = FrameFactory::getInstance().getFrames(frameName+"/back");
-    //setDirection(false);
+    //setHungry(false);
   }
 }

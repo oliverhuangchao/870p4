@@ -24,6 +24,8 @@ private:
   int currentSprite;
 
   bool makeVideo;
+  bool eatStar;//let the program know that the eagle now eating stars
+  
   int frameCount;
   const std::string username;
   const std::string title;

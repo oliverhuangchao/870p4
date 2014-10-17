@@ -25,6 +25,7 @@ Manager::Manager() :
   currentSprite(0),
 
   makeVideo( false ),
+  eatStar( false ),
   frameCount( 0 ),
   username(  Gamedata::getInstance().getXmlStr("username") ),
   title( Gamedata::getInstance().getXmlStr("screenTitle") ),
@@ -126,9 +127,9 @@ void Manager::play() {
         makeVideo = true;
       }
 
-      if (keystate[SDLK_o] && !makeVideo) {
-        std::cout << "Making video frames" << std::endl;
-        makeVideo = true;
+      if (keystate[SDLK_e] && !makeVideo) {
+        std::cout << "eagle now trying to east star" << std::endl;
+        eatStar = true;        
       }
     }
   

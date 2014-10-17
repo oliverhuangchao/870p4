@@ -16,8 +16,8 @@ public:
     return frames[currentFrame]; 
   }
 
-  const bool getDirection();
-  void setDirection(bool);
+  const bool getHungry();
+  void setHungry(const bool);
 
   const std::string getFrameName();
 
@@ -33,7 +33,7 @@ protected:
   int frameWidth;
   int frameHeight;
 
-  bool frameDirection;
+  bool frameHungry;
   std::string frameName;
 
   void advanceFrame(Uint32 ticks);

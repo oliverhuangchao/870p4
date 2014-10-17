@@ -3,7 +3,9 @@
 #include <map>
 #include "frame.h"
 #include "gamedata.h"
-
+#include "SDL/SDL_rotozoom.h"
+#include <SDL/SDL.h>
+#include <SDL_ttf.h>
 // The FrameFactory makes frames and reads the corresponding SDL_Surface,
 // storing the frames and their corresponding SDL_Surface (es) in maps. 
 // The FrameFactory treats the Frame class as a Flyweight in the sense 
@@ -37,6 +39,9 @@ public:
   // passed as parameters to the Frame constructor, but the Frame
   // width and height will be obtained from the XML:
   std::vector<Frame*> getFrames(const std::string&);
+  
+  std::vector<Frame*> changeFrames(const std::string&, double);
+
 
 private:
   const Gamedata& gdata;
