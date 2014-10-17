@@ -13,6 +13,16 @@ Frame::Frame( const std::string& name, SDL_Surface* surf ) :
   sourceY(0)
 { }
 
+Frame::Frame( const std::string& name, SDL_Surface* surf, double zoomInteger ) : 
+  screen(IOManager::getInstance().getScreen()),
+  surface( surf ),
+  width(Gamedata::getInstance().getXmlInt(name+"/width") * zoomInteger), 
+  height(Gamedata::getInstance().getXmlInt(name+"/height") * zoomInteger),
+  sourceX(0),
+  sourceY(0)
+{}
+
+
 Frame::Frame( SDL_Surface* spr, Uint16 w, Uint16 h,
               Sint16 src_x, Sint16 src_y) :
   screen(IOManager::getInstance().getScreen()),

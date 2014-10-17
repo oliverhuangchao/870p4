@@ -17,7 +17,8 @@ public:
   virtual void draw() const;
 
   virtual void update(Uint32 ticks);
-  const bool getCatched(){
+
+  bool getCatched(){
     return catched;
   }
   void setCatched(const bool x){

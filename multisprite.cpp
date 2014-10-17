@@ -81,17 +81,11 @@ void MultiSprite::update(Uint32 ticks) {
 
   if ( X() < 0) {
     velocityX( abs( velocityX() ) );
-    frames = FrameFactory::getInstance().getFrames(frameName+"/front");
-    frames = FrameFactory::getInstance().changeFrames(frameName+"/front",2.0);
-
-    //setHungry(true);
-    
-    
+    frames = FrameFactory::getInstance().changeFrames(frameName+"/front",1.5);
 
   }
   if ( X() > worldWidth-frameWidth) {
     velocityX( -abs( velocityX() ) );
-    frames = FrameFactory::getInstance().getFrames(frameName+"/back");
-    //setHungry(false);
+    frames = FrameFactory::getInstance().changeFrames(frameName+"/back",1.0);
   }
 }
