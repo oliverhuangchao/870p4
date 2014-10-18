@@ -21,6 +21,8 @@
   <height>1200</height>
 </world>
 
+
+<conflict>50</conflict>
 <back>
   <file>images/moon1920.jpg</file>
   <red>193</red>
@@ -69,10 +71,12 @@
   <speedX>-600</speedX>
   <speedY>600</speedY>
   <transparency>false</transparency>
+  <width>223</width>
+  <height>200</height>
 </dragon>
 
 <star>
-  <count>10</count>
+  <count>50</count>
   <file>images/yellowstar32.png</file>
   <srcX>0</srcX>
   <srcY>0</srcY>

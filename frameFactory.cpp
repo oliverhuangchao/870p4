@@ -62,7 +62,6 @@ std::vector<Frame*> FrameFactory::getFrames(const std::string& name) {
   if ( pos != multiFrames.end() ) {
     return pos->second;
   }
-
   // It wasn't in the map, so we have to make the vector of Frames:
   SDL_Surface* surface = IOManager::
      getInstance().loadAndSet(gdata.getXmlStr(name+"/file"), true);
@@ -93,12 +92,18 @@ std::vector<Frame*> FrameFactory::getFrames(const std::string& name) {
 
 std::vector<Frame*> FrameFactory::changeFrames(const std::string& name, double zoomInteger) {
   // First search map to see if we've already made it:
-  std::map<std::string, std::vector<Frame*> >::const_iterator 
-    pos = multiFrames.find(name); 
-  if ( pos != multiFrames.end() ) {
-    return pos->second;
-  }
 
+  std::map<std::string, std::vector<Frame*> >::iterator 
+    pos = multiFrames.find(name);
+  //std::map<std::string, int >::const_iterator  posZoom = frameZooms.find(name);
+  if ( pos != multiFrames.end()) {
+   /* if ( lastZoomValue != zoomInteger )
+      multiFrames.erase(pos);
+    else*/
+      return pos->second;
+  }
+  //lastZoomValue = zoomInteger;
+  //std::cout<<"hello"<<std::endl;
   // It wasn't in the map, so we have to make the vector of Frames:
   SDL_Surface* surface = IOManager::
      getInstance().loadAndSet(gdata.getXmlStr(name+"/file"), true);
@@ -114,7 +119,10 @@ std::vector<Frame*> FrameFactory::changeFrames(const std::string& name, double z
   Uint16 height = gdata.getXmlInt(name+"/height");
 
   SDL_Surface* surf;
-  SDL_Surface *newSurf;         
+  SDL_Surface *newSurf;     
+
+  //std::cout<<zoomInteger<<std::endl;    
+
   for (unsigned i = 0; i < numberOfFrames; ++i) {
     unsigned frameX = i * width + srcX;
 

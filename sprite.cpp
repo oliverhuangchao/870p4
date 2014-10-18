@@ -3,40 +3,41 @@
 #include "gamedata.h"
 #include "frameFactory.h"
 
-Sprite::Sprite(const std::string& name) :
+Sprite::Sprite(const std::string& name, const int order) :
   Drawable(name,
            Vector2f(Gamedata::getInstance().getXmlInt(name+"/startLoc/x")+rand()%100*5, 
                     Gamedata::getInstance().getXmlInt(name+"/startLoc/y")+rand()%100*5), 
            Vector2f(Gamedata::getInstance().getXmlInt(name+"/speedX")+rand()%100*5, 
-                    Gamedata::getInstance().getXmlInt(name+"/speedY")+rand()%100*5) 
+                    Gamedata::getInstance().getXmlInt(name+"/speedY")+rand()%100*5),
+           order,
+           Gamedata::getInstance().getXmlInt(name + "/width"),
+           Gamedata::getInstance().getXmlInt(name + "/height")
            ),
   frame( FrameFactory::getInstance().getFrame(name) ),
   frameWidth(frame->getWidth()),
   frameHeight(frame->getHeight()),
   worldWidth(Gamedata::getInstance().getXmlInt("world/width")),
-  worldHeight(Gamedata::getInstance().getXmlInt("world/height")),
-  catched(false)
+  worldHeight(Gamedata::getInstance().getXmlInt("world/height"))
 { }
 
-Sprite::Sprite(const string& n, const Vector2f& pos, const Vector2f& vel):
-  Drawable(n, pos, vel), 
+Sprite::Sprite(const string& n, const Vector2f& pos, const Vector2f& vel, const int order):
+  Drawable(n, pos, vel,order, Gamedata::getInstance().getXmlInt(n + "/width"), Gamedata::getInstance().getXmlInt(n + "/height")), 
   frame( FrameFactory::getInstance().getFrame(n) ),
   frameWidth(frame->getWidth()),
   frameHeight(frame->getHeight()),
   worldWidth(Gamedata::getInstance().getXmlInt("world/width")),
-  worldHeight(Gamedata::getInstance().getXmlInt("world/height")),
-  catched(false)
+  worldHeight(Gamedata::getInstance().getXmlInt("world/height"))
 { }
 
 Sprite::Sprite(const string& n, const Vector2f& pos, const Vector2f& vel,
-               const Frame* frm):
-  Drawable(n, pos, vel), 
+               const Frame* frm,const int order):
+  Drawable(n, pos, vel, order, Gamedata::getInstance().getXmlInt(n + "/width"),
+           Gamedata::getInstance().getXmlInt(n + "/height")), 
   frame( frm ),
   frameWidth(frame->getWidth()),
   frameHeight(frame->getHeight()),
   worldWidth(Gamedata::getInstance().getXmlInt("world/width")),
-  worldHeight(Gamedata::getInstance().getXmlInt("world/height")),
-  catched(false)
+  worldHeight(Gamedata::getInstance().getXmlInt("world/height"))
 { }
 
 Sprite::Sprite(const Sprite& s) :
@@ -45,8 +46,7 @@ Sprite::Sprite(const Sprite& s) :
   frameWidth(s.getFrame()->getWidth()),
   frameHeight(s.getFrame()->getHeight()),
   worldWidth(Gamedata::getInstance().getXmlInt("world/width")),
-  worldHeight(Gamedata::getInstance().getXmlInt("world/height")),
-  catched(s.catched)
+  worldHeight(Gamedata::getInstance().getXmlInt("world/height"))
 { }
 
 Sprite& Sprite::operator=(const Sprite& rhs) {
@@ -56,7 +56,6 @@ Sprite& Sprite::operator=(const Sprite& rhs) {
   frameHeight = rhs.frameHeight;
   worldWidth = rhs.worldWidth;
   worldHeight = rhs.worldHeight;
-  catched = rhs.catched;
   return *this;
 }
 
@@ -73,19 +72,60 @@ int Sprite::getDistance(const Sprite *obj) const {
 void Sprite::update(Uint32 ticks) { 
   Vector2f incr = getVelocity() * static_cast<float>(ticks) * 0.001;
   setPosition(getPosition() + incr);
-
-  if ( Y() < 0) {
+  if ( Y() < 0 ) {
     velocityY( abs( velocityY() ) );
   }
-  if ( Y() > worldHeight-frameHeight) {
+  if ( Y() > worldHeight-frameHeight ){
     velocityY( -abs( velocityY() ) );
   }
 
-  if ( X() < 0) {
+  if ( X() < 0 ){
     velocityX( abs( velocityX() ) );
   }
-  if ( X() > worldWidth-frameWidth) {
+  if ( X() > worldWidth-frameWidth ){
     velocityX( -abs( velocityX() ) );
-
-  }  
+  } 
 }
+
+
+void Sprite::update(Uint32 ticks, Drawable *BrotherSprite) { 
+  
+  Vector2f incr = getVelocity() * static_cast<float>(ticks) * 0.001;
+  setPosition(getPosition() + incr);
+  /*velocityX(BrotherSprite->velocityX()); 
+  velocityY(BrotherSprite->velocityY());*/
+
+  float centerX = BrotherSprite->X() + BrotherSprite->getFrameWidth()/2;
+  float centerY = BrotherSprite->Y() + BrotherSprite->getFrameHeight()/2;
+  float theta;
+  float radius = sqrt( pow( ( X()- centerX ), 2 ) + pow( ( Y()- centerY ), 2 ) );
+
+  float fixRadius = -100 + sqrt( pow(BrotherSprite->getFrameWidth() ,2) + pow(BrotherSprite->getFrameHeight(), 2) ) ;
+
+  if ( Y() > centerY && X() > centerX) {//4 area
+    theta = atan((Y()-centerY)/(X()-centerX));
+
+    X(fixRadius * cos(theta) + centerX );  Y(fixRadius * sin(theta) + centerY );
+    velocityX(  1*sin(theta)*radius + BrotherSprite->velocityX());
+    velocityY( -1*cos(theta)*radius + BrotherSprite->velocityY());
+  }
+  if ( Y() > centerY && X() < centerX) {//3 area
+    theta = atan((Y() - centerY)/(centerX - X()));
+    X(-1*fixRadius * cos(theta) + centerX);  Y(fixRadius * sin(theta) + centerY);
+    velocityX( 1*sin(theta)*radius + BrotherSprite->velocityX());
+    velocityY( 1*cos(theta)*radius + BrotherSprite->velocityY());
+  }
+  if ( Y() < centerY && X() < centerX) {//2 area
+    theta = atan((centerY - Y())/(centerX - X()));
+   X(-1*fixRadius * cos(theta) + centerX);    Y(-1*fixRadius * sin(theta) + centerY);
+    velocityX( -1*sin(theta)*radius + BrotherSprite->velocityX());
+    velocityY(  1*cos(theta)*radius + BrotherSprite->velocityY());
+  }
+  if ( Y() < centerY && X() > centerX) {//1 area
+    theta = atan((centerY - Y())/(X() - centerX));
+    X(fixRadius * cos(theta) + centerX);  Y(-1*fixRadius * sin(theta) + centerY);
+    velocityX( -1*sin(theta)*radius + BrotherSprite->velocityX());
+    velocityY( -1*cos(theta)*radius + BrotherSprite->velocityY());
+  }
+}
+
