@@ -86,5 +86,6 @@ void MultiSprite::update(Uint32 ticks) {
 }
 
 void MultiSprite::update(Uint32 ticks, Drawable*) {
+  std::cout<<ticks<<std::endl;
 } 
 

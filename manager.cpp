@@ -99,11 +99,12 @@ void Manager::update() {
     else
       sprites[i]->update(ticks,sprites[sprites[i]->getFrameFollower()]);
   }
-  /*----- test whether have already confilcted ------*/
-
-  for ( int i = 0; i < singlePostion; ++i){
-    for ( int j = singlePostion; j< sprites.size()-singlePostion; ++j){
-      if(spriteConflict(sprites[i],sprites[j])){}
+  /*----- Birds begin to eat stars ------*/
+  if (eatStar){
+    for ( int i = 0; i < singlePostion; ++i){
+      for ( int j = singlePostion; j< (int)sprites.size()-singlePostion; ++j){
+        if(spriteConflict(sprites[i],sprites[j])){}
+      }
     }
   }
 
@@ -115,7 +116,8 @@ void Manager::update() {
 }
 
 bool Manager::spriteConflict( Drawable* multi, Drawable* single ){
-  if ( getDistance(multi->X(),multi->Y(),single->X(),single->Y(),conflictScale) && !single->getCatched() ){
+  if ( getDistance(multi->X()+multi->getFrameWidth(),multi->Y()+multi->getFrameHeight(),single->X(),single->Y(),conflictScale) && !single->getCatched() )
+  {
     single->setCatched(true);
     single->setFrameFollower(multi->getFrameNumber());
     multi->setTotalFollowers(multi->getTotalFollowers()+1);
@@ -126,7 +128,7 @@ bool Manager::spriteConflict( Drawable* multi, Drawable* single ){
 }
 
 bool getDistance(int a1,int a2, int b1, int b2, int value){
-  int result = abs( a1 - b1 ) + abs( a2 - b2 );
+  int result = sqrt( pow( (a1 - b1), 2 ) + pow( ( a2 - b2 ), 2 ) );
   if (result <= value)
     return true;
   else
@@ -176,8 +178,17 @@ void Manager::play() {
       }
 
       if (keystate[SDLK_e] && !makeVideo) {
-        std::cout << "eagle now trying to east star" << std::endl;
-        eatStar = true;        
+        if(!eatStar){
+          std::cout<<"begin eating"<<std::endl;
+          io.printMessageAt("Birds begin eating", 100, 70);
+          eatStar = true;   
+          SDL_Flip(screen);
+   
+        }
+        /*else{
+          io.printMessageAt("Birds stop eating", 100, 70);
+          eatStar = false;
+        }   */
       }
     }
   
@@ -187,7 +198,7 @@ void Manager::play() {
 }
 
 bool Manager::stopGame(){
-  for (int i = singlePostion ; i< sprites.size(); i++){
+  for (int i = singlePostion ; i< (int)sprites.size(); i++){
     if (sprites[i]->getFrameFollower() == -1)
       return false;
   }
