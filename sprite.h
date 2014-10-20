@@ -5,10 +5,10 @@
 
 class Sprite : public Drawable {
 public:
-  Sprite(const std::string&);
-  Sprite(const std::string&, const Vector2f& pos, const Vector2f& vel);
+  Sprite(const std::string&,const int);
+  Sprite(const std::string&, const Vector2f& pos, const Vector2f& vel, const int);
   Sprite(const std::string&, 
-         const Vector2f& pos, const Vector2f& vel, const Frame*);
+         const Vector2f& pos, const Vector2f& vel, const Frame*,const int);
   Sprite(const Sprite& s);
   virtual ~Sprite() { } 
   Sprite& operator=(const Sprite&);
@@ -17,12 +17,10 @@ public:
   virtual void draw() const;
 
   virtual void update(Uint32 ticks);
-  const bool getCatched(){
-    return catched;
-  }
-  void setCatched(const bool x){
-    catched = x;
-  }
+
+  virtual void update(Uint32 ticks, Drawable *BrotherSprite);
+
+
 
 private:
   const Frame * frame;
@@ -30,8 +28,6 @@ private:
   int frameHeight;
   int worldWidth;
   int worldHeight;
-
-  bool catched;
 
   int getDistance(const Sprite*) const;
 };

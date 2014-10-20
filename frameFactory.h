@@ -57,12 +57,15 @@ private:
   // The next map stores Frames for Multi-frame sprites:
   std::map<std::string, std::vector<Frame*> > multiFrames;
 
+  //std::map<std::string, std::vector<Frame*> > frameZooms;
+
   FrameFactory() : 
     gdata( Gamedata::getInstance() ), 
     surfaces(),
     multiSurfaces(),
     frames(),
     multiFrames()
+    //frameZooms()
   {}
   FrameFactory(const FrameFactory&);
   FrameFactory& operator=(const FrameFactory&);

@@ -10,12 +10,15 @@ void MultiSprite::advanceFrame(Uint32 ticks) {
 	}
 }
 
-MultiSprite::MultiSprite( const std::string& name) :
+MultiSprite::MultiSprite( const std::string& name, const int order) :
   Drawable(name, 
            Vector2f(Gamedata::getInstance().getXmlInt(name+"/startLoc/x")+rand()%100*5, 
                     Gamedata::getInstance().getXmlInt(name+"/startLoc/y")+rand()%100*5), 
-           Vector2f(Gamedata::getInstance().getXmlInt(name+"/speedX"),
-                    Gamedata::getInstance().getXmlInt(name+"/speedY"))
+           Vector2f(Gamedata::getInstance().getXmlInt(name+"/speedX")+rand()%100*5,
+                    Gamedata::getInstance().getXmlInt(name+"/speedY")+rand()%100*5),
+           order,
+           Gamedata::getInstance().getXmlInt(name + "/width"),
+           Gamedata::getInstance().getXmlInt(name + "/height")
            ),
   frames( FrameFactory::getInstance().getFrames(name+"/back") ),
   worldWidth(Gamedata::getInstance().getXmlInt("world/width")),
@@ -27,7 +30,7 @@ MultiSprite::MultiSprite( const std::string& name) :
   timeSinceLastFrame( 0 ),
   frameWidth(frames[0]->getWidth()),
   frameHeight(frames[0]->getHeight()),
-  frameHungry( false ),
+  //frameHungry( false ),
   frameName( name )
 { }
 
@@ -42,21 +45,9 @@ MultiSprite::MultiSprite(const MultiSprite& s) :
   timeSinceLastFrame( s.timeSinceLastFrame ),
   frameWidth( s.frameWidth ),
   frameHeight( s.frameHeight ),
-  frameHungry( s.frameHungry ),
+  //frameHungry( s.frameHungry ),
   frameName(s.frameName)
   { }
-
-void MultiSprite::setHungry(const bool x){
-  frameHungry = x;
-}
-
-const bool MultiSprite::getHungry(){
-  return frameHungry;
-}
-
-const std::string MultiSprite::getFrameName(){
-  return frameName;
-}
 
 void MultiSprite::draw() const { 
   Uint32 x = static_cast<Uint32>(X());
@@ -70,28 +61,31 @@ void MultiSprite::update(Uint32 ticks) {
 
   Vector2f incr = getVelocity() * static_cast<float>(ticks) * 0.001;
   setPosition(getPosition() + incr);
+  //double zoomValue = 1.0 + this->getTotalFollowers()*0.1;
+
 
   if ( Y() < 0) {
     velocityY( abs( velocityY() ) );
   }
   if ( Y() > worldHeight-frameHeight) {
     velocityY( -abs( velocityY() ) );
-    
   }
-
   if ( X() < 0) {
     velocityX( abs( velocityX() ) );
-    frames = FrameFactory::getInstance().getFrames(frameName+"/front");
-    frames = FrameFactory::getInstance().changeFrames(frameName+"/front",2.0);
-
-    //setHungry(true);
-    
-    
-
+    frames = FrameFactory::getInstance().changeFrames(frameName+"/front",1.5);
   }
   if ( X() > worldWidth-frameWidth) {
     velocityX( -abs( velocityX() ) );
-    frames = FrameFactory::getInstance().getFrames(frameName+"/back");
-    //setHungry(false);
+    frames = FrameFactory::getInstance().changeFrames(frameName+"/back",1.0);
   }
+
+ /* if(velocityX() > 0 && zoomValue)
+     frames = FrameFactory::getInstance().changeFrames(frameName+"/front",zoomValue);
+  else
+     frames = FrameFactory::getInstance().changeFrames(frameName+"/back",zoomValue);*/
 }
+
+void MultiSprite::update(Uint32 ticks, Drawable*) {
+  std::cout<<ticks<<std::endl;
+} 
+

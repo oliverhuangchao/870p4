@@ -6,20 +6,22 @@
 
 class MultiSprite : public Drawable {
 public:
-  MultiSprite(const std::string&);
+  MultiSprite(const std::string&, const int );
   MultiSprite(const MultiSprite&);
   virtual ~MultiSprite() { } 
 
   virtual void draw() const;
   virtual void update(Uint32 ticks);
+  virtual void update(Uint32 ticks,Drawable *);
   virtual const Frame* getFrame() const { 
     return frames[currentFrame]; 
   }
 
-  const bool getHungry();
-  void setHungry(const bool);
+/*void setHungry(const bool x){frameHungry = x;}
 
-  const std::string getFrameName();
+bool getHungry() const {return frameHungry;}*/
+std::string getFrameName()const {return frameName;}
+
 
 protected:
   std::vector<Frame *> frames;
@@ -33,7 +35,10 @@ protected:
   int frameWidth;
   int frameHeight;
 
-  bool frameHungry;
+
+
+
+  //bool frameHungry;
   std::string frameName;
 
   void advanceFrame(Uint32 ticks);

@@ -4,13 +4,15 @@
 #include "clock.h"
 #include "world.h"
 #include "viewport.h"
+#include "drawable.h"
 
 class Manager {
 public:
   Manager ();
   ~Manager ();
   void play();
-
+  bool spriteConflict( Drawable* multi, Drawable* single );
+  bool stopGame();
 private:
   const bool env;
   const IOManager& io;
@@ -25,6 +27,8 @@ private:
 
   bool makeVideo;
   bool eatStar;//let the program know that the eagle now eating stars
+  int singlePostion;//when the singlePost will start
+  int conflictScale;
   
   int frameCount;
   const std::string username;

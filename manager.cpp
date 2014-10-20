@@ -5,6 +5,13 @@
 #include "sprite.h"
 #include "gamedata.h"
 #include "manager.h"
+#include "drawable.h"
+#include <cmath>
+
+
+
+bool getDistance(int a1,int a2, int b1, int b2, int value);
+
 
 Manager::~Manager() { 
   // These deletions eliminate "definitely lost" and
@@ -26,6 +33,9 @@ Manager::Manager() :
 
   makeVideo( false ),
   eatStar( false ),
+  singlePostion( 0 ),
+  conflictScale( Gamedata::getInstance().getXmlInt("conflict") ),
+
   frameCount( 0 ),
   username(  Gamedata::getInstance().getXmlStr("username") ),
   title( Gamedata::getInstance().getXmlStr("screenTitle") ),
@@ -36,13 +46,19 @@ Manager::Manager() :
   }
   SDL_WM_SetCaption(title.c_str(), NULL);
   atexit(SDL_Quit);
+  int tmpCount = 0;
+  /*----- multi frame object -----*/
+  for (int i = 0; i < Gamedata::getInstance().getXmlInt("dragon/count"); i++){
+    sprites.push_back( new MultiSprite("dragon", singlePostion) );
+    ++singlePostion;
+    ++tmpCount;
+  }
+  // ------ below is the single frame ------  
+  for (int i = 0; i < Gamedata::getInstance().getXmlInt("star/count"); i++){
+    sprites.push_back( new Sprite("star", tmpCount) );
+    ++tmpCount;
+  }
   
-  for (int i = 0; i < Gamedata::getInstance().getXmlInt("dragon/count"); i++)
-    sprites.push_back( new MultiSprite("dragon") );
-  for (int i = 0; i < Gamedata::getInstance().getXmlInt("star/count"); i++)
-    sprites.push_back( new Sprite("star") );
-  for (int i = 0; i < Gamedata::getInstance().getXmlInt("greenorb/count"); i++)
-    sprites.push_back( new Sprite("greenorb") );
   
   viewport.setObjectToTrack(sprites[currentSprite]);
 }
@@ -51,12 +67,14 @@ void Manager::draw() const {
   world.draw();
   for (unsigned i = 0; i < sprites.size(); ++i) {
     sprites[i]->draw();
+    //std::cout<<sprites[i]->getFrameFollower()<<"  ";
   }
+  //std::cout<<std::endl;
 
   io.printMessageValueAt("Seconds: ", clock.getSeconds(), 10, 20);
   io.printMessageValueAt("fps: ", clock.getAvgFps(), 10, 40);
   io.printMessageAt("Press T to switch sprites", 10, 70);
-  io.printMessageAt(title, 10, 450);
+  io.printMessageAt(title, 10, 750);
   viewport.draw();
 
   SDL_Flip(screen);
@@ -76,13 +94,45 @@ void Manager::update() {
   ++clock;
   Uint32 ticks = clock.getElapsedTicks();
   for (unsigned int i = 0; i < sprites.size(); ++i) {
-    sprites[i]->update(ticks);
+    if (sprites[i]->getFrameFollower() == -1)
+      sprites[i]->update(ticks);
+    else
+      sprites[i]->update(ticks,sprites[sprites[i]->getFrameFollower()]);
   }
+  /*----- Birds begin to eat stars ------*/
+  if (eatStar){
+    for ( int i = 0; i < singlePostion; ++i){
+      for ( int j = singlePostion; j< (int)sprites.size()-singlePostion; ++j){
+        if(spriteConflict(sprites[i],sprites[j])){}
+      }
+    }
+  }
+
   if ( makeVideo && frameCount < frameMax ) {
     makeFrame();
   }
   world.update();
-  viewport.update(); // always update viewport last
+  viewport.update(); 
+}
+
+bool Manager::spriteConflict( Drawable* multi, Drawable* single ){
+  if ( getDistance(multi->X()+multi->getFrameWidth(),multi->Y()+multi->getFrameHeight(),single->X(),single->Y(),conflictScale) && !single->getCatched() )
+  {
+    single->setCatched(true);
+    single->setFrameFollower(multi->getFrameNumber());
+    multi->setTotalFollowers(multi->getTotalFollowers()+1);
+    return true;
+  }
+  else
+    return false;
+}
+
+bool getDistance(int a1,int a2, int b1, int b2, int value){
+  int result = sqrt( pow( (a1 - b1), 2 ) + pow( ( a2 - b2 ), 2 ) );
+  if (result <= value)
+    return true;
+  else
+    return false;
 }
 
 void Manager::play() {
@@ -128,12 +178,29 @@ void Manager::play() {
       }
 
       if (keystate[SDLK_e] && !makeVideo) {
-        std::cout << "eagle now trying to east star" << std::endl;
-        eatStar = true;        
+        if(!eatStar){
+          std::cout<<"begin eating"<<std::endl;
+          io.printMessageAt("Birds begin eating", 100, 70);
+          eatStar = true;   
+          SDL_Flip(screen);
+   
+        }
+        /*else{
+          io.printMessageAt("Birds stop eating", 100, 70);
+          eatStar = false;
+        }   */
       }
     }
   
     draw();
     update();
   }
+}
+
+bool Manager::stopGame(){
+  for (int i = singlePostion ; i< (int)sprites.size(); i++){
+    if (sprites[i]->getFrameFollower() == -1)
+      return false;
+  }
+  return true;
 }

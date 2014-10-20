@@ -62,7 +62,6 @@ std::vector<Frame*> FrameFactory::getFrames(const std::string& name) {
   if ( pos != multiFrames.end() ) {
     return pos->second;
   }
-
   // It wasn't in the map, so we have to make the vector of Frames:
   SDL_Surface* surface = IOManager::
      getInstance().loadAndSet(gdata.getXmlStr(name+"/file"), true);
@@ -93,42 +92,50 @@ std::vector<Frame*> FrameFactory::getFrames(const std::string& name) {
 
 std::vector<Frame*> FrameFactory::changeFrames(const std::string& name, double zoomInteger) {
   // First search map to see if we've already made it:
-  std::map<std::string, std::vector<Frame*> >::const_iterator 
-    pos = multiFrames.find(name); 
-  if ( pos != multiFrames.end() ) {
-    return pos->second;
-  }
 
+  std::map<std::string, std::vector<Frame*> >::iterator 
+    pos = multiFrames.find(name);
+  //std::map<std::string, int >::const_iterator  posZoom = frameZooms.find(name);
+  if ( pos != multiFrames.end()) {
+   /* if ( lastZoomValue != zoomInteger )
+      multiFrames.erase(pos);
+    else*/
+      return pos->second;
+  }
+  //lastZoomValue = zoomInteger;
+  //std::cout<<"hello"<<std::endl;
   // It wasn't in the map, so we have to make the vector of Frames:
   SDL_Surface* surface = IOManager::
      getInstance().loadAndSet(gdata.getXmlStr(name+"/file"), true);
   unsigned numberOfFrames = gdata.getXmlInt(name+"/frames");
+
   std::vector<Frame*> frames;
   std::vector<SDL_Surface*> surfaces;
   frames.reserve(numberOfFrames);
+
   Uint16 srcX = gdata.getXmlInt(name+"/srcX");
   Uint16 srcY = gdata.getXmlInt(name+"/srcY");
   Uint16 width = gdata.getXmlInt(name+"/width");
   Uint16 height = gdata.getXmlInt(name+"/height");
 
   SDL_Surface* surf;
+  SDL_Surface *newSurf;     
+
+  //std::cout<<zoomInteger<<std::endl;    
+
   for (unsigned i = 0; i < numberOfFrames; ++i) {
     unsigned frameX = i * width + srcX;
-   surf = ExtractSurface::getInstance().
-               get(surface, width, height, frameX, srcY); 
-               
-   // change here
-	surf = zoomSurface(surf, zoomInteger, zoomInteger, SMOOTHING_ON);
-    surfaces.push_back( surf );
+
+    surf = ExtractSurface::getInstance().
+                 get(surface, width, height, frameX, srcY); 
     
-    frames.push_back( new Frame(name, surf) );
+  	newSurf = zoomSurface(surf, zoomInteger, zoomInteger, SMOOTHING_ON);
+    surfaces.push_back( newSurf );
+    frames.push_back( new Frame(name, newSurf,zoomInteger) );//draw
   }
   SDL_FreeSurface(surface);
+  //SDL_FreeSurface(newSurf);
   multiSurfaces[name] = surfaces;
   multiFrames[name] = frames;
   return frames;
-  
-  //pic = zoomSurface(pter, zoom, zoom, SMOOTHING_ON);
-  
-  //
 }

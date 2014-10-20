@@ -21,6 +21,8 @@
   <height>1200</height>
 </world>
 
+
+<conflict>50</conflict>
 <back>
   <file>images/moon1920.jpg</file>
   <red>193</red>
@@ -66,9 +68,11 @@
   <startLoc x="120" y="140"/> 
   <frames>12</frames>
   <frameInterval>20</frameInterval>
-  <speedX>-300</speedX>
-  <speedY>300</speedY>
+  <speedX>-600</speedX>
+  <speedY>600</speedY>
   <transparency>false</transparency>
+  <width>223</width>
+  <height>200</height>
 </dragon>
 
 <star>
