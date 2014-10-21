@@ -69,7 +69,6 @@ void Manager::draw() const {
     sprites[i]->draw();
     //std::cout<<sprites[i]->getFrameFollower()<<"  ";
   }
-  //std::cout<<std::endl;
 
   io.printMessageValueAt("Seconds: ", clock.getSeconds(), 10, 20);
   io.printMessageValueAt("fps: ", clock.getAvgFps(), 10, 40);
