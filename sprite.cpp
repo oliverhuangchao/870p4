@@ -92,9 +92,7 @@ void Sprite::update(Uint32 ticks, Drawable *BrotherSprite) {
   
   Vector2f incr = getVelocity() * static_cast<float>(ticks) * 0.001;
   setPosition(getPosition() + incr);
-  /*velocityX(BrotherSprite->velocityX()); 
-  velocityY(BrotherSprite->velocityY());*/
-
+  
   float centerX = BrotherSprite->X() + BrotherSprite->getFrameWidth()/2;
   float centerY = BrotherSprite->Y() + BrotherSprite->getFrameHeight()/2;
   float theta;

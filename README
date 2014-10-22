@@ -1,0 +1,34 @@
+Name: Chao Huang
+Clemson Email Address: chaoh@g.clemson.edu
+Cpsc: 8700. Software engineering
+
+
+Project No:	4
+Project Due date:	Oct. 21th, 2014
+
+Project basic description:
+1. In this project, I try to use Factory function to create more sprite including multiSprite and singleSprite.
+2. MultiSprite has 12 frames and it can change it fly way while they touch left and right screen
+3. The view port is smaller than the world size.
+4. I also achieve the zoom function: When the bird touch the left side, it can change its size; When touch the right side, it will change back to the original size
+
+
+Extra & Special function:
+
+When you click 'e' button. The bird will eat the flying pumpkin and then the eaten pumking will fly around the bird in circle.
+
+As default, there will be two birds. So you will se one of the birds will eat more pumking then the other. It is just like a game. 
+
+However, you should wait 10-20s to see the result very obversly.
+
+
+
+
+Project Problem:
+There sill be some memory leak in my code. I still need to fix them.
+It may caused by sdl_surface, I think.
+
+PS:
+1. The pumpking: drawn by myself.
+2. The background image: reference is 'https://d3b4yo2b5lbfy.cloudfront.net/wp-content/uploads/2012/10/halloween-2012-mad-king-tower.jpg'
+3. The flying birds image: reference is 'http://www.spriters-resource.com/3ds/marioluigidreamteam/sheet/63122/'

@@ -2,14 +2,14 @@
 <GameData>
 <!-- screenTitle is also used to identify you and your animation. 
      So make sure to include your name as part of the screenTitle -->
-<screenTitle>Chao Huang's Star Animation</screenTitle>
+<screenTitle>Chao Huang's Fly Pumpkin</screenTitle>
 <maxStringSize>50</maxStringSize>
 
 <frameCap>60</frameCap>
 <framesAreCapped>true</framesAreCapped>
 
 <frameMax>200</frameMax>
-<username>Chaoh</username>
+<username>chaoh</username>
 
 <view>
   <width>1000</width>
@@ -18,13 +18,13 @@
 
 <world>
   <width>1920</width>
-  <height>1200</height>
+  <height>1000</height>
 </world>
 
 
 <conflict>50</conflict>
 <back>
-  <file>images/moon1920.jpg</file>
+  <file>images/halloween.jpg</file>
   <red>193</red>
   <green>205</green>
   <blue>205</blue>
@@ -32,7 +32,7 @@
   <srcX>0</srcX>
   <srcY>0</srcY>
   <width>1920</width>
-  <height>1200</height>
+  <height>1080</height>
   <transparency>false</transparency>
 </back>
 
@@ -41,7 +41,7 @@
   <size>16</size>
   <red>255</red>
   <green>255</green>
-  <blue>255</blue>
+  <blue>0</blue>
   <unused>0</unused>
 </font>
 
@@ -77,7 +77,7 @@
 
 <star>
   <count>50</count>
-  <file>images/yellowstar32.png</file>
+  <file>images/pumpking.png</file>
   <srcX>0</srcX>
   <srcY>0</srcY>
   <width>32</width>

@@ -61,8 +61,6 @@ void MultiSprite::update(Uint32 ticks) {
 
   Vector2f incr = getVelocity() * static_cast<float>(ticks) * 0.001;
   setPosition(getPosition() + incr);
-  //double zoomValue = 1.0 + this->getTotalFollowers()*0.1;
-
 
   if ( Y() < 0) {
     velocityY( abs( velocityY() ) );
@@ -79,10 +77,6 @@ void MultiSprite::update(Uint32 ticks) {
     frames = FrameFactory::getInstance().changeFrames(frameName+"/back",1.0);
   }
 
- /* if(velocityX() > 0 && zoomValue)
-     frames = FrameFactory::getInstance().changeFrames(frameName+"/front",zoomValue);
-  else
-     frames = FrameFactory::getInstance().changeFrames(frameName+"/back",zoomValue);*/
 }
 
 void MultiSprite::update(Uint32 ticks, Drawable*) {

@@ -93,18 +93,10 @@ std::vector<Frame*> FrameFactory::changeFrames(const std::string& name, double z
   // First search map to see if we've already made it:
 
   std::map<std::string, std::vector<Frame*> >::iterator pos = multiFrames.find(name);
-  //std::map<std::string, int >::const_iterator  posZoom = frameZooms.find(name);
   if ( pos != multiFrames.end()) {
-   /* if ( lastZoomValue != zoomInteger )
-      multiFrames.erase(pos);
-    else*/
-      return pos->second;
+        return pos->second;
   }
-  //lastZoomValue = zoomInteger;
-  //std::cout<<"hello"<<std::endl;
-
-
-
+ 
   // It wasn't in the map, so we have to make the vector of Frames:
   SDL_Surface* surface = IOManager::
      getInstance().loadAndSet(gdata.getXmlStr(name+"/file"), true);
