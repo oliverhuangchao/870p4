@@ -112,6 +112,7 @@ std::vector<Frame*> FrameFactory::changeFrames(const std::string& name, double z
   Uint16 height = gdata.getXmlInt(name+"/height");
 
   SDL_Surface* surf;
+  SDL_Surface* tmp_surf;
 
   for (unsigned i = 0; i < numberOfFrames; ++i) {
     unsigned frameX = i * width + srcX;
@@ -119,12 +120,13 @@ std::vector<Frame*> FrameFactory::changeFrames(const std::string& name, double z
     surf = ExtractSurface::getInstance().
                  get(surface, width, height, frameX, srcY); 
     
-    surf = zoomSurface(surf, zoomInteger, zoomInteger, SMOOTHING_ON);
-    surfaces.push_back( surf );//newSurf
-    frames.push_back( new Frame(name, surf, zoomInteger) );//draw
+    tmp_surf = zoomSurface(surf, zoomInteger, zoomInteger, SMOOTHING_ON);
+    surfaces.push_back( tmp_surf );
+    frames.push_back( new Frame(name, tmp_surf, zoomInteger) );
+	SDL_FreeSurface(surf);
+	//SDL_FreeSurface(tmp_surf);
   }
-
-
+ 
   SDL_FreeSurface(surface);
   
   multiSurfaces[name] = surfaces;
